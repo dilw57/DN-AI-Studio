@@ -1,29 +1,60 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DN AI Studio</title>
 <style>
-body{margin:0;background:#080d1c;color:white;font-family:Arial;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.box{max-width:420px;width:100%;background:#111a31;border:1px solid #293557;border-radius:22px;padding:25px}
+body{margin:0;background:#080d1c;color:white;font-family:Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{max-width:420px;width:100%;background:#111a31;border:1px solid #293557;border-radius:22px;padding:25px;box-sizing:border-box}
 h1{text-align:center;margin:0}.sub{text-align:center;color:#aeb7d7;margin:8px 0 25px}
-.tabs{display:flex;gap:8px}.tabs button{flex:1;padding:12px;border:0;border-radius:10px;background:#202b49;color:white;font-weight:bold}.tabs .on{background:#7055ff}
+.tabs{display:flex;gap:8px}.tabs button{flex:1;padding:12px;border:0;border-radius:10px;background:#202b49;color:white;font-weight:bold;cursor:pointer}.tabs .on{background:#7055ff}
 input{width:100%;box-sizing:border-box;padding:14px;margin:7px 0;border-radius:10px;border:1px solid #39486d;background:#0a1021;color:white}
-.main{width:100%;padding:14px;border:0;border-radius:10px;background:#7055ff;color:white;font-weight:bold;font-size:16px;margin-top:8px}.msg{text-align:center;margin-top:15px;line-height:1.5;color:#cbd2ea}
-</style></head><body>
-<div class="box"><h1>✨ DN AI Studio</h1><div class="sub">AI tools for creators</div>
-<div class="tabs"><button id="l" class="on" onclick="setMode('login')">Login</button><button id="s" onclick="setMode('signup')">Sign Up</button></div>
-<input id="email" type="email" placeholder="Email address"><input id="password" type="password" placeholder="Password">
-<button id="go" class="main" onclick="auth()">Login</button><div id="msg" class="msg"></div></div>
+.main{width:100%;padding:14px;border:0;border-radius:10px;background:#7055ff;color:white;font-weight:bold;font-size:16px;margin-top:8px;cursor:pointer}
+.msg{text-align:center;margin-top:15px;line-height:1.5;color:#cbd2ea;min-height:24px}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>✨ DN AI Studio</h1>
+<div class="sub">AI tools for creators</div>
+<div class="tabs">
+<button id="l" class="on" onclick="setMode('login')">Login</button>
+<button id="s" onclick="setMode('signup')">Sign Up</button>
+</div>
+<input id="email" type="email" placeholder="Email address" autocomplete="email">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
+<button id="go" class="main" onclick="auth()">Login</button>
+<div id="msg" class="msg"></div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const sb=window.supabase.createClient("https://xpjvjxptqqibfxvoqbmn.supabase.co","sb_publishable_JwmReyj4LK9vREEaucotvg_h_LoaWal");
+const SUPABASE_URL="https://xpjvjxptqqibfxvoqbmn.supabase.co";
+const SUPABASE_KEY="sb_publishable_JwmReyj4LK9vREEaucotvg_h_LoaWal";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let m="login";
-function setMode(x){m=x;l.classList.toggle("on",x==="login");s.classList.toggle("on",x==="signup");go.textContent=x==="login"?"Login":"Create Account";msg.textContent=""}
-async function auth(){
- let email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
- if(!email||!password){msg.textContent="Enter your email and password.";return}
- msg.textContent="Please wait…";
- let r=m==="signup"?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
- if(r.error){msg.textContent=r.error.message;return}
- msg.textContent=m==="signup"?(r.data.session?"Account created!":"Account created. Check your email to confirm, then log in."):"Login successful!";
+function setMode(x){
+ m=x;
+ document.getElementById("l").classList.toggle("on",x==="login");
+ document.getElementById("s").classList.toggle("on",x==="signup");
+ document.getElementById("go").textContent=x==="login"?"Login":"Create Account";
+ document.getElementById("msg").textContent="";
 }
-</script></body></html>
+async function auth(){
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ const msg=document.getElementById("msg");
+ if(!email||!password){msg.textContent="Enter your email and password.";return;}
+ if(password.length<6){msg.textContent="Password must be at least 6 characters.";return;}
+ msg.textContent="Please wait…";
+ const r=m==="signup"
+  ?await sb.auth.signUp({email,password})
+  :await sb.auth.signInWithPassword({email,password});
+ if(r.error){msg.textContent=r.error.message;return;}
+ msg.textContent=m==="signup"
+  ?(r.data.session?"Account created successfully!":"Account created. Check your email to confirm, then log in.")
+  :"Login successful! 🎉";
+}
+</script>
+</body>
+</html>
