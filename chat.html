@@ -1,20 +1,352 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>DN AI Studio - AI Chat</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080d1c;color:#fff;font-family:Arial,sans-serif;min-height:100vh}.app{max-width:700px;margin:auto;min-height:100vh;display:flex;flex-direction:column}.header{padding:18px 16px;border-bottom:1px solid #293557;background:#111a31;display:flex;align-items:center;justify-content:space-between}.brand{font-size:20px;font-weight:bold}.back{color:#cbd2ea;text-decoration:none;font-size:14px}.chat{flex:1;padding:20px 16px;overflow-y:auto}.welcome{text-align:center;color:#aeb7d7;margin:30px 0}.msg{display:flex;margin:12px 0}.msg.user{justify-content:flex-end}.bubble{max-width:82%;padding:12px 15px;border-radius:16px;line-height:1.5;white-space:pre-wrap}.ai .bubble{background:#111a31;border:1px solid #293557}.user .bubble{background:#7055ff}.composer{padding:12px 16px 18px;background:#080d1c;border-top:1px solid #202b49;display:flex;gap:8px}#input{flex:1;padding:14px;border-radius:12px;border:1px solid #39486d;background:#111a31;color:#fff;outline:none}#send{padding:0 18px;border:0;border-radius:12px;background:#7055ff;color:#fff;font-weight:bold}#send:disabled{opacity:.5}.note{text-align:center;color:#737d9f;font-size:11px;padding:0 16px 8px}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#080d1c;
+  color:white;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
+}
+
+.app{
+  width:100%;
+  max-width:650px;
+  height:90vh;
+  max-height:800px;
+  background:#111a31;
+  border:1px solid #293557;
+  border-radius:22px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 15px 50px rgba(0,0,0,.35);
+}
+
+/* Header */
+
+.header{
+  padding:16px 18px;
+  border-bottom:1px solid #293557;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#10182d;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.status{
+  font-size:12px;
+  color:#9fa9ca;
+}
+
+.back{
+  color:#b9aaff;
+  text-decoration:none;
+  font-size:13px;
+}
+
+/* Chat */
+
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.message{
+  max-width:85%;
+  padding:12px 15px;
+  border-radius:15px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+}
+
+.user{
+  align-self:flex-end;
+  background:#7055ff;
+}
+
+.ai{
+  align-self:flex-start;
+  background:#202b49;
+  border:1px solid #344267;
+}
+
+.system{
+  align-self:center;
+  color:#8f9abb;
+  font-size:13px;
+  text-align:center;
+}
+
+/* Input */
+
+.bottom{
+  padding:14px;
+  border-top:1px solid #293557;
+  background:#10182d;
+}
+
+.form{
+  display:flex;
+  gap:8px;
+}
+
+input{
+  flex:1;
+  min-width:0;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #39486d;
+  outline:none;
+  background:#0a1021;
+  color:white;
+  font-size:15px;
+}
+
+input:focus{
+  border-color:#7055ff;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  background:#7055ff;
+  color:white;
+  padding:0 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.hint{
+  text-align:center;
+  color:#687394;
+  font-size:11px;
+  margin-top:8px;
+}
+
+.typing{
+  opacity:.7;
+  font-style:italic;
+}
 </style>
 </head>
+
 <body>
-<div class="app"><header class="header"><div class="brand">✨ DN AI Studio</div><a class="back" href="dashboard.html">← Dashboard</a></header>
-<main id="chat" class="chat"><div class="welcome"><h2>🤖 AI Chat</h2><p>Ask anything and start a conversation.</p></div></main>
-<div class="note">Demo chat UI — real AI API connection will be added through a secure backend.</div>
-<form class="composer" onsubmit="sendMessage(event)"><input id="input" autocomplete="off" placeholder="Type your message..."><button id="send" type="submit">Send</button></form></div>
+
+<div class="app">
+
+  <div class="header">
+    <div>
+      <div class="logo">✨ DN AI Studio</div>
+      <div class="status">AI Chat</div>
+    </div>
+
+    <a class="back" href="index.html">← Back</a>
+  </div>
+
+
+  <div id="chat" class="chat">
+
+    <div class="message ai">
+      Hello! 👋 I'm DN AI Studio AI.
+      How can I help you today?
+    </div>
+
+  </div>
+
+
+  <div class="bottom">
+
+    <div class="form">
+
+      <input
+        id="messageInput"
+        type="text"
+        placeholder="Ask me anything..."
+        autocomplete="off"
+      >
+
+      <button id="sendButton" onclick="sendMessage()">
+        Send
+      </button>
+
+    </div>
+
+    <div class="hint">
+      Powered by DN AI Studio
+    </div>
+
+  </div>
+
+</div>
+
+
 <script>
-const chat=document.getElementById("chat"),input=document.getElementById("input"),send=document.getElementById("send");
-function addMessage(text,type){const row=document.createElement("div");row.className="msg "+type;const bubble=document.createElement("div");bubble.className="bubble";bubble.textContent=text;row.appendChild(bubble);chat.appendChild(row);chat.scrollTop=chat.scrollHeight}
-function sendMessage(e){e.preventDefault();const text=input.value.trim();if(!text)return;addMessage(text,"user");input.value="";send.disabled=true;setTimeout(()=>{addMessage("AI connection is not configured yet. This chat page is ready for the secure AI backend connection.","ai");send.disabled=false;input.focus()},500)}
-</script></body></html>
+
+const FUNCTION_URL =
+"https://xpjvjxptqqibfxvoqbmn.supabase.co/functions/v1/clever-processor";
+
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("messageInput");
+const sendButton = document.getElementById("sendButton");
+
+
+function addMessage(text, type){
+
+  const message = document.createElement("div");
+
+  message.className = "message " + type;
+
+  message.textContent = text;
+
+  chat.appendChild(message);
+
+  chat.scrollTop = chat.scrollHeight;
+
+  return message;
+}
+
+
+async function sendMessage(){
+
+  const message = input.value.trim();
+
+  if(!message){
+    return;
+  }
+
+
+  // Show user message
+
+  addMessage(message, "user");
+
+  input.value = "";
+
+  sendButton.disabled = true;
+
+  sendButton.textContent = "Sending...";
+
+
+  // Typing indicator
+
+  const typing = addMessage("AI is thinking...", "ai");
+
+  typing.classList.add("typing");
+
+
+  try{
+
+    const response = await fetch(FUNCTION_URL, {
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        message:message
+      })
+
+    });
+
+
+    const data = await response.json();
+
+
+    // Remove typing message
+
+    typing.remove();
+
+
+    if(!response.ok){
+
+      addMessage(
+        "Error: " + (data.error || "Something went wrong."),
+        "ai"
+      );
+
+      return;
+    }
+
+
+    // Show AI response
+
+    addMessage(
+      data.reply || "No response received.",
+      "ai"
+    );
+
+
+  }catch(error){
+
+    typing.remove();
+
+    addMessage(
+      "Connection error. Please try again.",
+      "ai"
+    );
+
+    console.error(error);
+
+  }finally{
+
+    sendButton.disabled = false;
+
+    sendButton.textContent = "Send";
+
+    input.focus();
+
+  }
+
+}
+
+
+// Press Enter to send
+
+input.addEventListener("keydown", function(event){
+
+  if(event.key === "Enter"){
+
+    event.preventDefault();
+
+    sendMessage();
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
