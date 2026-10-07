@@ -1,60 +1,332 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DN AI Studio</title>
-<style>
-body{margin:0;background:#080d1c;color:white;font-family:Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.box{max-width:420px;width:100%;background:#111a31;border:1px solid #293557;border-radius:22px;padding:25px;box-sizing:border-box}
-h1{text-align:center;margin:0}.sub{text-align:center;color:#aeb7d7;margin:8px 0 25px}
-.tabs{display:flex;gap:8px}.tabs button{flex:1;padding:12px;border:0;border-radius:10px;background:#202b49;color:white;font-weight:bold;cursor:pointer}.tabs .on{background:#7055ff}
-input{width:100%;box-sizing:border-box;padding:14px;margin:7px 0;border-radius:10px;border:1px solid #39486d;background:#0a1021;color:white}
-.main{width:100%;padding:14px;border:0;border-radius:10px;background:#7055ff;color:white;font-weight:bold;font-size:16px;margin-top:8px;cursor:pointer}
-.msg{text-align:center;margin-top:15px;line-height:1.5;color:#cbd2ea;min-height:24px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DN AI Studio</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #080d1c;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 900px;
+      height: 100vh;
+      max-height: 850px;
+      background: #0d1428;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      height: 70px;
+      background: #111a31;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid #26304b;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4f7cff, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin-right: 12px;
+    }
+
+    .brand h1 {
+      font-size: 20px;
+    }
+
+    .brand p {
+      color: #8d98b5;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px 18px;
+    }
+
+    .welcome {
+      text-align: center;
+      margin-top: 80px;
+      color: #aeb8d0;
+    }
+
+    .welcome .big-logo {
+      width: 70px;
+      height: 70px;
+      margin: auto;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #4f7cff, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .welcome h2 {
+      color: white;
+      font-size: 25px;
+      margin-bottom: 8px;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 18px;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 78%;
+      padding: 13px 16px;
+      border-radius: 16px;
+      line-height: 1.5;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .user .bubble {
+      background: #4267d5;
+      border-bottom-right-radius: 5px;
+    }
+
+    .ai .bubble {
+      background: #18223d;
+      border: 1px solid #273354;
+      border-bottom-left-radius: 5px;
+    }
+
+    .typing {
+      color: #8d98b5;
+      font-size: 13px;
+      margin: 5px 0 15px 8px;
+      display: none;
+    }
+
+    .input-area {
+      padding: 15px;
+      background: #0d1428;
+      border-top: 1px solid #26304b;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      background: #111a31;
+      border: 1px solid #2b3859;
+      border-radius: 18px;
+      padding: 8px 8px 8px 15px;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: white;
+      font-size: 15px;
+      min-height: 25px;
+      max-height: 120px;
+      padding: 7px 0;
+    }
+
+    textarea::placeholder {
+      color: #687594;
+    }
+
+    button {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 13px;
+      background: #4f7cff;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      text-align: center;
+      color: #596681;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 901px) {
+      .app {
+        height: 95vh;
+        border: 1px solid #26304b;
+        border-radius: 20px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="box">
-<h1>✨ DN AI Studio</h1>
-<div class="sub">AI tools for creators</div>
-<div class="tabs">
-<button id="l" class="on" onclick="setMode('login')">Login</button>
-<button id="s" onclick="setMode('signup')">Sign Up</button>
-</div>
-<input id="email" type="email" placeholder="Email address" autocomplete="email">
-<input id="password" type="password" placeholder="Password" autocomplete="current-password">
-<button id="go" class="main" onclick="auth()">Login</button>
-<div id="msg" class="msg"></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL="https://xpjvjxptqqibfxvoqbmn.supabase.co";
-const SUPABASE_KEY="sb_publishable_JwmReyj4LK9vREEaucotvg_h_LoaWal";
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let m="login";
-function setMode(x){
- m=x;
- document.getElementById("l").classList.toggle("on",x==="login");
- document.getElementById("s").classList.toggle("on",x==="signup");
- document.getElementById("go").textContent=x==="login"?"Login":"Create Account";
- document.getElementById("msg").textContent="";
-}
-async function auth(){
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const msg=document.getElementById("msg");
- if(!email||!password){msg.textContent="Enter your email and password.";return;}
- if(password.length<6){msg.textContent="Password must be at least 6 characters.";return;}
- msg.textContent="Please wait…";
- const r=m==="signup"
-  ?await sb.auth.signUp({email,password})
-  :await sb.auth.signInWithPassword({email,password});
- if(r.error){msg.textContent=r.error.message;return;}
- msg.textContent=m==="signup"
-  ?(r.data.session?"Account created successfully!":"Account created. Check your email to confirm, then log in.")
-  :"Login successful! 🎉";
-}
-</script>
+
+  <div class="app">
+
+    <header class="header">
+      <div class="logo">DN</div>
+
+      <div class="brand">
+        <h1>DN AI Studio</h1>
+        <p>AI Assistant</p>
+      </div>
+    </header>
+
+    <main class="chat" id="chat">
+
+      <div class="welcome" id="welcome">
+        <div class="big-logo">DN</div>
+        <h2>Welcome to DN AI Studio</h2>
+        <p>Ask me anything.</p>
+      </div>
+
+    </main>
+
+    <div class="typing" id="typing">
+      DN AI is thinking...
+    </div>
+
+    <div class="input-area">
+
+      <div class="input-box">
+
+        <textarea
+          id="messageInput"
+          placeholder="Message DN AI..."
+          rows="1"
+        ></textarea>
+
+        <button id="sendButton" onclick="sendMessage()">
+          ➤
+        </button>
+
+      </div>
+
+      <div class="footer">
+        DN AI Studio
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const input = document.getElementById("messageInput");
+    const chat = document.getElementById("chat");
+    const sendButton = document.getElementById("sendButton");
+    const typing = document.getElementById("typing");
+    const welcome = document.getElementById("welcome");
+
+    input.addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    });
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    function addMessage(text, type) {
+
+      if (welcome) {
+        welcome.style.display = "none";
+      }
+
+      const message = document.createElement("div");
+      message.className = "message " + type;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      message.appendChild(bubble);
+      chat.appendChild(message);
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function sendMessage() {
+
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      addMessage(message, "user");
+
+      input.value = "";
+      input.style.height = "auto";
+
+      sendButton.disabled = true;
+      typing.style.display = "block";
+
+      /*
+        REAL AI CONNECTION WILL BE ADDED HERE
+        IN THE NEXT STEP.
+
+        We will connect this chatbot to your
+        Supabase Edge Function:
+        clever-processor
+      */
+
+      setTimeout(() => {
+
+        typing.style.display = "none";
+
+        addMessage(
+          "Your AI connection is not connected yet. We will connect the real AI backend in the next step.",
+          "ai"
+        );
+
+        sendButton.disabled = false;
+
+      }, 800);
+    }
+
+  </script>
+
 </body>
 </html>
